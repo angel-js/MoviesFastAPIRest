@@ -41,4 +41,5 @@ pip install uvicorn
 ## Run the Application
 ```
 uvicorn main:app
+uvicorn main:app --port 5000 --reload
 ```
