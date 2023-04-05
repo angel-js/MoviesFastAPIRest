@@ -8,10 +8,16 @@ from typing import Optional, List
 from jwt_manager import create_token, validate_token
 # Middelware
 from fastapi.security import HTTPBearer
+# Configuracion
+from config.database import session, engine, Base
+from models.movie import Movie
+from models.movie import Movie as MovieModel
 
 app = FastAPI()
 app.title = "Mi aplicacion con FastAPI"
 app.version = "0.0.1"
+
+Base.metadata.create_all(bind=engine)
 
 class JWTBearer(HTTPBearer):
     async def __call__(self, request: Request):
@@ -106,7 +112,11 @@ def get_movies_by_category(category: str = Query(min_length=5, max_length=15)) -
 
 @app.post('/movies', tags=['movies'], response_model=dict)
 def create_movie(movie: Movie) -> dict:
+    db = session()
+    new_movie = MovieModel(**movie.dict())
     movies.append(movie)
+    db.add(new_movie)
+    db.commit()
     return JSONResponse(status_code=201, content={"message": "Se registro la pelicula"})
 
 @app.put('/movies/{id}', tags=['movies'], response_model=dict)
