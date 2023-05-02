@@ -2,3 +2,5 @@
 venv/
 #Python cache Files
 __pycache__/
+#Base de datos
+database.sqlite
